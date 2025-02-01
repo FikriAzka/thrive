@@ -17,11 +17,11 @@ class MeetingTable extends Component
             'meetings' => Meeting::query()
                 ->where(function($query) {
                     $query->where('nama_rapat', 'LIKE', '%'.$this->search.'%')
-                          ->orWhere('agenda_rapat', 'LIKE', '%'.$this->search.'%');
+                        ->orWhere('agenda_rapat', 'LIKE', '%'.$this->search.'%');
                 })
+                ->orderBy('created_at', 'desc')
                 ->orderBy('tanggal_mulai', 'desc')
                 ->orderBy('jam_mulai', 'desc')
-                ->orderBy('created_at', 'desc')
                 ->paginate(5)
         ]);
     }

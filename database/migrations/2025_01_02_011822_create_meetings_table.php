@@ -27,7 +27,10 @@ return new class extends Migration
             $table->string('nama_pic');
             $table->string('peserta');
             $table->enum('status', ['scheduled', 'completed', 'cancelled'])->default('scheduled');
-            $table->text('notes')->nullable();
+            $table->string('attachment')->nullable();
+            
+
+            
             $table->timestamps();
         });
 

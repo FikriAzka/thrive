@@ -22,7 +22,7 @@ class MeetingController extends Controller
     {
         $this->googleMeetController = $googleMeetController;
     }
-    public function index(Request $request)
+    public function index()
     {
         
 
@@ -35,14 +35,63 @@ class MeetingController extends Controller
         return view('meetings.buat_rapat', compact('users'));
     }
 
+    public function upload(Meeting $meeting, Request $request)
+    {
+        try {
+            $request->validate([
+                'attachment' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048'
+            ]);
+            
+            if ($request->hasFile('attachment')) {
+                // Store the file
+                $path = $request->file('attachment')->store('meeting-attachments', 'public');
+                
+                // Tambahkan log untuk debugging
+                Log::info('File path: ' . $path);
+                
+                // Update meeting to save attachment path only
+                $updated = $meeting->update([
+                    'attachment' => $path
+                ]);
+                
+                // Tambahkan log untuk memastikan update berhasil
+                Log::info('Update status: ' . ($updated ? 'success' : 'failed'));
+                Log::info('Meeting data: ' . json_encode($meeting));
+                
+                if (!$updated) {
+                    return back()->with('error', 'Gagal menyimpan data');
+                }
+            }
+            
+            return redirect()->route('meetings.show', $meeting->id)
+                ->with('success', 'Attachment uploaded successfully.');
+                
+        } catch (\Exception $e) {
+            // Tambahkan log error
+            Log::error('Error in upload method: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
     public function complete(Meeting $meeting)
     {
-        // Memperbarui status rapat menjadi 'completed'
-        $meeting->update(['status' => 'completed']);
-        
-        // Mengalihkan ke halaman daftar rapat dengan pesan sukses
-        return redirect()->route('meetings.index')->with('success', 'Meeting marked as completed');
+        try {
+            $updated = $meeting->update([
+                'status' => 'completed'
+            ]);
+            
+            if (!$updated) {
+                return back()->with('error', 'Gagal mengubah status meeting');
+            }
+            
+            return redirect()->route('meetings.show', $meeting->id)
+                ->with('success', 'Meeting marked as completed successfully.');
+                
+        } catch (\Exception $e) {
+            Log::error('Error in complete method: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
+    
 
 
     public function getUsers(Request $request)
@@ -105,12 +154,15 @@ class MeetingController extends Controller
 
     public function show(Meeting $meeting)
     {
-        // Eager load participants with related user
-        $participants = MeetingParticipant::with('user')
-            ->where('meeting_id', $meeting->id) // Use $meeting->id to get the current meeting's ID
-            ->get();
+            
+         // Decode 'nama_pic' to get the array of user IDs
+        $namaPicIds = json_decode($meeting->nama_pic, true);
+        $namaPicUsers = User::whereIn('id', $namaPicIds)->get();
 
-        return view('meetings.show', compact('meeting', 'participants'));
+        // Decode 'peserta' to get the array of user IDs for participants
+        $pesertaIds = json_decode($meeting->peserta, true);
+        $pesertaUsers = User::whereIn('id', $pesertaIds)->get();
+        return view('meetings.show', compact('meeting','namaPicUsers', 'pesertaUsers'));
     }
 
 

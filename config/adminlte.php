@@ -65,7 +65,7 @@ return [
 
     'logo' => '<b></b>',
     'logo_img' => 'images/logo-thrive.png',
-    'logo_img_class' => 'brand-image elevation-3',
+    'logo_img_class' => 'brand-image',
     'logo_img_xl' => 'images/logo-thrive.png',
     'logo_img_xl_class' => 'brand-image-xs',
     'logo_img_alt' => 'Admin Logo',
@@ -334,15 +334,15 @@ return [
         ],
         [
             'text' => 'Kalendar Rapat',
-            'icon' => 'fas fa-fw fa-users',
+            'icon' => 'fas fa-fw fa-calendar-alt',
             'url' => '/calendar',           
         ],
         [
             'text' => 'Rating',
-            // 'icon' => 'fas fa-fw fa-users',
-            'url' => '/rating',           
+            'icon' => 'fas fa-fw fa-star',
+
+            'url' => '/ratings',           
         ],
-        
         
     ],
 

@@ -75,7 +75,7 @@
                 eventMouseEnter: function(info) {
                     // Buat tooltip menggunakan Tippy.js
                     tippy(info.el, {
-                        content: `Judul: ${info.event.title}<br>
+                        content: `Nama Rapat: ${info.event.title}<br>
                           Waktu: ${info.event.start.toLocaleTimeString()}<br>
                           Deskripsi: ${info.event.extendedProps.description || 'Tidak ada deskripsi'}`,
                         allowHTML: true, // Izinkan HTML di tooltip

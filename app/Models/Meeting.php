@@ -21,7 +21,9 @@ class Meeting extends Model
         'nama_pic',
         'peserta',
         'status',
-        'notes'
+        'attachment',
+        'meet_creation_status',
+        'meet_creation_error'
 
     ];
 

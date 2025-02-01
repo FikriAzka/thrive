@@ -67,6 +67,8 @@
                                         <a href="{{ route('meetings.show', $meeting) }}" class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i>
                                         </a>
+                                        <a href="{{ route('ratings.create', $meeting) }}"
+                                            class="btn btn-success btn-sm"> <i class="far fa-fw fa-star"></i> </a>
                                     </div>
                                 </td>
                             </tr>
