@@ -28,4 +28,9 @@ class Rating extends Model
         'suggestions',
         'suggestions2'
     ];
+
+    public function meeting()
+    {
+        return $this->belongsTo(Meeting::class);
+    }
 }

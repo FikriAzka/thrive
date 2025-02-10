@@ -20,26 +20,6 @@ class RatingController extends Controller
         return view('ratings.index', compact('ratings', 'neutral', 'very_satisfied'));
     }
 
-    // public function index()
-    // {
-    //     $ratings = Rating::with('meeting')->latest()->get();
-        
-    //     // Hitung distribusi rating
-    //     $distribution = [
-    //         5 => $ratings->where('pertanyaan1', 5)->count(),
-    //         4 => $ratings->where('pertanyaan1', 4)->count(),
-    //         3 => $ratings->where('pertanyaan1', 3)->count(),
-    //         2 => $ratings->where('pertanyaan1', 2)->count(),
-    //         1 => $ratings->where('pertanyaan1', 1)->count(),
-    //     ];
-
-    //     return view('ratings.index', [
-    //         'ratingsData' => [
-    //             'ratings' => $ratings,
-    //             'distribution' => $distribution
-    //         ]
-    //     ]);
-    // }
     public function showDataForm(Meeting $meeting)  // Tambah parameter Meeting
     {
         return view('ratings.create', compact('meeting'));

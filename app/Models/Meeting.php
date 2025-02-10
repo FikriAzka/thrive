@@ -24,7 +24,6 @@ class Meeting extends Model
         'attachment',
         'meet_creation_status',
         'meet_creation_error'
-
     ];
 
     public function participants()
