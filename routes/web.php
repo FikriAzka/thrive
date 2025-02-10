@@ -19,10 +19,10 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/calendar', function () {
-    return view('calendar');
-});
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');use App\Http\Controllers\CalendarController;
+
+Route::get('/calendar', [CalendarController::class, 'showCalendar'])->name('calendar')->middleware('auth');
+
 
 
 
