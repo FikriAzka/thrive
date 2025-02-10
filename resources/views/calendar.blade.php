@@ -68,7 +68,7 @@
                 initialView: 'dayGridMonth',
                 googleCalendarApiKey: 'AIzaSyBmz-V3YrbLuNglISLd41yaQs1zh-96sss',
                 events: {
-                    googleCalendarId: 'fikriazkaa4@gmail.com'
+                    googleCalendarId: '{{ $email }}',
                 },
                 displayEventTime: false, // Sembunyikan waktu
                 // Tambahkan eventMouseEnter untuk tooltip
