@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="p-6 bg-gray-50 min-h-screen">
-        <div class="max-w-7xl mx-auto">
+        <div class="container w-full max-w-7xl mx-auto p-6 bg-gray-50">
             <!-- Tab Navigation -->
             <div class="border-b border-gray-200" x-data="{ isOpen: false, selectedMeeting: '{{ request('meeting_id') }}', activeTab: '{{ request('meeting_id') ? 'specific' : 'all' }}' }">
                 <nav class="flex -mb-px">
