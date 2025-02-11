@@ -20,10 +20,12 @@ class RatingController extends Controller
         return view('ratings.index', compact('ratings', 'neutral', 'very_satisfied'));
     }
 
-    public function showDataForm(Meeting $meeting)  // Tambah parameter Meeting
+    public function showDataForm(Meeting $meeting)
     {
+
         return view('ratings.create', compact('meeting'));
     }
+
 
     public function storeData(Request $request, Meeting $meeting)
     {

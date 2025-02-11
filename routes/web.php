@@ -19,6 +19,8 @@ Auth::routes();
 
 // Route untuk ratings (dikecualikan dari middleware auth)
 Route::get('/ratings/{meeting}/create', [RatingController::class, 'showDataForm'])->name('ratings.create');
+// Route::get('/ratings/{meeting}/{token}', [RatingController::class, 'showDataForm'])->name('ratings.create');
+
 Route::post('/ratings/{meeting}/store-data', [RatingController::class, 'storeData'])->name('ratings.store-data');
 Route::get('/ratings/{meeting}/form', [RatingController::class, 'showRatingForm'])->name('ratings.form');
 Route::post('/ratings/{meeting}/store', [RatingController::class, 'storeRating'])->name('ratings.store');

@@ -30,6 +30,8 @@ return new class extends Migration
             $table->integer('pertanyaan8');
             $table->text('suggestions2')->nullable();
             $table->text('suggestions')->nullable(); 
+            $table->string('token')->unique()->nullable();
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });
     }

@@ -1,12 +1,15 @@
-@extends('adminlte::page')
+<!DOCTYPE html>
+<html lang="id">
 
-@section('title', 'Specialist Feedback')
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Rating</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 
-@section('content_header')
-    {{-- <h1>Specialist Feedback</h1> --}}
-@stop
+<body>
 
-@section('content')
     <div class="container py-4">
         <div class="card">
             <div class="card-header bg-light">
@@ -30,7 +33,6 @@
                     <div class="mb-3">
                         <label class="form-label required">Nomor HP</label>
                         <input type="tel" class="form-control" name="phone" required pattern="[0-9]+">
-
                     </div>
 
                     <div class="mb-3">
@@ -56,18 +58,14 @@
         </div>
     </div>
 
-@stop
-
-@section('css')
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-@stop
-
-@section('js')
+    <!-- Script diletakkan di akhir body -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.15.10/dist/sweetalert2.all.min.js"></script>
     <script>
         document.querySelector('input[name="phone"]').addEventListener('input', function(e) {
             this.value = this.value.replace(/\D/g, ''); // Hapus semua karakter non-angka
         });
     </script>
-@stop
+
+</body>
+
+</html>

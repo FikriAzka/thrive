@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Rating extends Model
 {
@@ -26,11 +27,22 @@ class Rating extends Model
         'pertanyaan7',
         'pertanyaan8',
         'suggestions',
-        'suggestions2'
+        'suggestions2',
+        'token',
+        'expires_at'
     ];
 
     public function meeting()
     {
         return $this->belongsTo(Meeting::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($rating) {
+            $rating->token = Str::random(32);
+            $rating->expires_at = now()->addDay(); // Token berlaku 24 jam
+        });
     }
 }

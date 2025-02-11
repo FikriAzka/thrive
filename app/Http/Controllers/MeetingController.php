@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Rating;
 use App\Models\Meeting;
-use Google\Service\Calendar;
 
+use Google\Service\Calendar;
 use Illuminate\Http\Request;
+use App\Mail\RatingInvitation;
 use App\Mail\MeetingInvitation;
 use App\Models\MeetingParticipant;
 use Google\Client as GoogleClient;
@@ -72,20 +74,58 @@ class MeetingController extends Controller
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+    
+
     public function complete(Meeting $meeting)
     {
         try {
+            // Update status meeting ke 'completed'
             $updated = $meeting->update([
                 'status' => 'completed'
             ]);
-            
+
             if (!$updated) {
                 return back()->with('error', 'Gagal mengubah status meeting');
             }
-            
+
+            // Ambil semua peserta meeting berdasarkan `meeting_id`
+            $participants = MeetingParticipant::where('meeting_id', $meeting->id)
+                ->with('user') // Ambil data user yang terkait
+                ->get();
+
+            // Ambil semua PIC dari model Rating (jika PIC disimpan di rating)
+            $ratings = Rating::where('meeting_id', $meeting->id)
+                ->where('expires_at', '>', now()) // Hanya yang tokennya masih aktif
+                ->get();
+
+            // Array untuk menyimpan semua email yang akan dikirimi
+            $emails = [];
+
+            // Tambahkan email peserta (diambil dari User)
+            foreach ($participants as $participant) {
+                if ($participant->user && $participant->user->email) {
+                    $emails[] = $participant->user->email;
+                }
+            }
+
+            // Tambahkan email PIC (jika ada dalam kolom `pic` di Rating)
+            foreach ($ratings as $rating) {
+                if (!empty($rating->pic)) {
+                    $emails[] = $rating->pic;
+                }
+            }
+
+            // Hapus email duplikat agar tidak ada yang menerima email dua kali
+            $emails = array_unique($emails);
+
+            // Kirim email ke setiap peserta & PIC
+            foreach ($emails as $email) {
+                Mail::to($email)->send(new RatingInvitation($meeting));
+            }
+
             return redirect()->route('meetings.show', $meeting->id)
-                ->with('success', 'Meeting marked as completed successfully.');
-                
+                ->with('success', 'Meeting selesai & link rating dikirim ke peserta dan PIC.');
+
         } catch (\Exception $e) {
             Log::error('Error in complete method: ' . $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
