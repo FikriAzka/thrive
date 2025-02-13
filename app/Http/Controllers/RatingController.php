@@ -6,6 +6,7 @@ use App\Models\Rating;
 use App\Models\Meeting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class RatingController extends Controller
 {
@@ -20,12 +21,24 @@ class RatingController extends Controller
         return view('ratings.index', compact('ratings', 'neutral', 'very_satisfied'));
     }
 
-    public function showDataForm(Meeting $meeting)
+    public function showDataForm($meeting)
     {
+        if (!Cache::get('allow_ratings', false) && !auth()->check()) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
 
         return view('ratings.create', compact('meeting'));
     }
 
+    public function toggleAccess(Request $request)
+    {
+        Cache::put('allow_ratings', $request->allow_ratings, now()->addHours(1));
+    
+        return response()->json([
+            'message' => 'Pengaturan akses berhasil diperbarui.'
+        ]);
+    }
+    
 
     public function storeData(Request $request, Meeting $meeting)
     {
