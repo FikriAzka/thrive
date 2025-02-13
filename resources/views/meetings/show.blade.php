@@ -124,7 +124,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('meetings.complete', $meeting->id) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('meetings.upload', $meeting->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PATCH')
                     <div class="modal-body">
