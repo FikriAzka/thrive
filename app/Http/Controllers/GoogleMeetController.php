@@ -136,6 +136,7 @@ class GoogleMeetController extends Controller
         $event = new Event([
             'summary' => $request->nama_rapat,
             'start' => $startDateTime,
+            'description' => $request->agenda_rapat,
             'end' => $endDateTime,
             'attendees' => $attendees,
             'conferenceData' => [
@@ -146,18 +147,19 @@ class GoogleMeetController extends Controller
             ],
         ]);
 
-        Log::info('Final Event Data:', [
-            'summary' => $request->nama_rapat,
-            'start' => $startDateTime->getDateTime(),
-            'end' => $endDateTime->getDateTime(),
-            'attendees' => $attendees,
-            'conferenceData' => [
-                'createRequest' => [
-                    'requestId' => uniqid(),
-                    'conferenceSolutionKey' => ['type' => 'hangoutsMeet'],
-                ],
-            ],
-        ]);
+        // Log::info('Final Event Data:', [
+        //     'summary' => $request->nama_rapat,
+        //     'start' => $startDateTime->getDateTime(),
+        //     'description' => $event->description,
+        //     'end' => $endDateTime->getDateTime(),
+        //     'attendees' => $attendees,
+        //     'conferenceData' => [
+        //         'createRequest' => [
+        //             'requestId' => uniqid(),
+        //             'conferenceSolutionKey' => ['type' => 'hangoutsMeet'],
+        //         ],
+        //     ],
+        // ]);
         Log::info('Access Token:', $client->getAccessToken());
         
 
@@ -169,7 +171,7 @@ class GoogleMeetController extends Controller
                 $event, 
                 [
                     'conferenceDataVersion' => 1,
-                    'sendUpdates' => 'all'    // Pindahkan ke sini
+                    'sendUpdates' => 'all',
                 ]
             );
             $googleMeetLink = $createdEvent->getHangoutLink();  // Mendapatkan link Google Meet

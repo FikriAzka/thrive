@@ -22,8 +22,7 @@ class Meeting extends Model
         'peserta',
         'status',
         'attachment',
-        'meet_creation_status',
-        'meet_creation_error'
+        'attachment_link'
     ];
 
     public function participants()

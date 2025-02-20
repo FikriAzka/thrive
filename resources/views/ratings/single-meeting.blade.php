@@ -197,8 +197,10 @@
                                             <table class="w-full">
                                                 <tbody class="divide-y divide-gray-100">
                                                     <tr>
-                                                        <td class="py-2.5 text-sm text-gray-600 w-3/4">Berikan penilaian Anda secara keseluruhan terhadap Specialist yang membantu proses
-                                                            onboarding.</td>
+                                                        <td class="py-2.5 text-sm text-gray-600 w-3/4">1. Berikan
+                                                            penilaian Anda secara keseluruhan terhadap Specialist yang
+                                                            membantu proses
+                                                            onboarding</td>
                                                         <td class="py-2.5">
                                                             <span
                                                                 class="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium {{ $rating->pertanyaan1 >= 4 ? 'bg-green-100 text-green-800' : ($rating->pertanyaan1 >= 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
@@ -207,8 +209,10 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="py-2.5 text-sm text-gray-600">Bagaimana kualitas
-                                                            komunikasi tim kami?</td>
+                                                        <td class="py-2.5 text-sm text-gray-600">2. Bagaimana penilaian
+                                                            Anda terhadap keramahan, kedisiplinan, dan sopan santun yang
+                                                            ditunjukkan oleh tim Specialist kami dalam memberikan
+                                                            pelayanan?</td>
                                                         <td class="py-2.5">
                                                             <span
                                                                 class="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium {{ $rating->pertanyaan2 >= 4 ? 'bg-green-100 text-green-800' : ($rating->pertanyaan2 >= 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
@@ -217,8 +221,10 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="py-2.5 text-sm text-gray-600">Seberapa cepat respon
-                                                            yang kami berikan?</td>
+                                                        <td class="py-2.5 text-sm text-gray-600">3. Bagaimana penilaian
+                                                            Anda terhadap product knowledge yang dimiliki oleh
+                                                            Specialist kami
+                                                            dalam membantu Anda selama proses onboarding?</td>
                                                         <td class="py-2.5">
                                                             <span
                                                                 class="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium {{ $rating->pertanyaan3 >= 4 ? 'bg-green-100 text-green-800' : ($rating->pertanyaan3 >= 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
@@ -227,8 +233,10 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="py-2.5 text-sm text-gray-600">Apakah solusi yang kami
-                                                            berikan memuaskan?</td>
+                                                        <td class="py-2.5 text-sm text-gray-600">4. Bagaimana penilaian
+                                                            Anda terhadap penyelesaian masalah dan solusi yang diberikan
+                                                            Specialist kami dalam membantu kesuksesan proses onboarding?
+                                                        </td>
                                                         <td class="py-2.5">
                                                             <span
                                                                 class="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium {{ $rating->pertanyaan4 >= 4 ? 'bg-green-100 text-green-800' : ($rating->pertanyaan4 >= 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
@@ -237,8 +245,10 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="py-2.5 text-sm text-gray-600">Bagaimana pengalaman
-                                                            Anda dengan tim support?</td>
+                                                        <td class="py-2.5 text-sm text-gray-600">5. Bagaimana penilaian
+                                                            Anda terhadap cara komunikasi dari Specialist kami baik
+                                                            verbal maupun
+                                                            non-verbal?</td>
                                                         <td class="py-2.5">
                                                             <span
                                                                 class="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium {{ $rating->pertanyaan5 >= 4 ? 'bg-green-100 text-green-800' : ($rating->pertanyaan5 >= 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
@@ -247,8 +257,8 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="py-2.5 text-sm text-gray-600">Seberapa jelas
-                                                            informasi yang kami sampaikan?</td>
+                                                        <td class="py-2.5 text-sm text-gray-600">6. Penilaian Produk
+                                                        </td>
                                                         <td class="py-2.5">
                                                             <span
                                                                 class="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium {{ $rating->pertanyaan6 >= 4 ? 'bg-green-100 text-green-800' : ($rating->pertanyaan6 >= 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
@@ -257,8 +267,10 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="py-2.5 text-sm text-gray-600">Apakah timeline
-                                                            pengerjaan sesuai ekspektasi?</td>
+                                                        <td class="py-2.5 text-sm text-gray-600">7. Bagaimana penilaian
+                                                            Anda terhadap ketepatan waktu yang dijanjikan Specialist
+                                                            kami dalam
+                                                            menyelesaikan proses onboarding?</td>
                                                         <td class="py-2.5">
                                                             <span
                                                                 class="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium {{ $rating->pertanyaan7 >= 4 ? 'bg-green-100 text-green-800' : ($rating->pertanyaan7 >= 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
@@ -267,8 +279,9 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="py-2.5 text-sm text-gray-600">Seberapa mungkin Anda
-                                                            merekomendasikan kami?</td>
+                                                        <td class="py-2.5 text-sm text-gray-600">8. Bagaimana penilaian
+                                                            Anda terhadap keseluruhan proses onboarding yang telah
+                                                            dilakukan?</td>
                                                         <td class="py-2.5">
                                                             <span
                                                                 class="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium {{ $rating->pertanyaan8 >= 4 ? 'bg-green-100 text-green-800' : ($rating->pertanyaan8 >= 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
