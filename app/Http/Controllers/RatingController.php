@@ -23,7 +23,7 @@ class RatingController extends Controller
 
     public function showDataForm($meeting)
     {
-        if (!Cache::get('allow_ratings', false) && !auth()->check()) {
+        if (!Cache::get('allow_ratings_{$meeting}', false) && !auth()->check()) {
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 

@@ -10,12 +10,22 @@ use App\Http\Controllers\RatingController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\GoogleMeetController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\ProjectManagementController;
 
 Route::get('/', function () {
     return view('auth.login');
 });
 
 Auth::routes();
+
+Route::get('/projectmanagement', [ProjectManagementController::class, 'index'])->name('projectmanagement.index');
+Route::get('/projectmanagement/create', [ProjectManagementController::class, 'create'])->name('projectmanagement.create');
+Route::post('/projectmanagement', [ProjectManagementController::class, 'store'])->name('projectmanagement.store');
+Route::get('/projectmanagement/{id}', [ProjectManagementController::class, 'show'])->name('projectmanagement.show');
+Route::get('/projectmanagement/{id}/edit', [ProjectManagementController::class, 'edit'])->name('projectmanagement.edit');
+Route::put('/projectmanagement/{id}', [ProjectManagementController::class, 'update'])->name('projectmanagement.update');
+Route::delete('/projectmanagement/{id}', [ProjectManagementController::class, 'destroy'])->name('projectmanagement.destroy');
+
 
 // Route untuk ratings (dikecualikan dari middleware auth)
 Route::get('/ratings/{meeting}/create', [RatingController::class, 'showDataForm'])->name('ratings.create');
