@@ -1,119 +1,10 @@
-@extends('adminlte::page')
+<!DOCTYPE html>
+<html lang="id">
 
-@section('title', 'Specialist Feedback')
-
-@section('content_header')
-    <h1>Rating</h1>
-@stop
-
-@section('content')
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-    <div class="container py-4">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title mb-0 text-center w-100">
-
-                    Pendapat Anda sangat berarti untuk perkembangan produk dan servis kami
-                </h3>
-            </div>
-
-            <div class="card-body">
-                <form id="feedbackForm" action="{{ route('ratings.store', $meeting) }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="meeting_id" value="{{ $meeting->id }}">
-
-
-                    <h4 class="section-title">Specialist</h4>
-
-                    @foreach (range(1, 5) as $questionNumber)
-                        @if ($questionNumber == 1)
-                            <hr>
-                        @endif
-                        <div class="rating-container">
-                            <div class="question-text">
-                                @switch($questionNumber)
-                                    @case(1)
-                                        1. Berikan penilaian Anda secara keseluruhan terhadap Specialist yang membantu proses
-                                        onboarding
-                                    @break
-
-                                    @case(2)
-                                        2. Bagaimana penilaian Anda terhadap keramahan, kedisiplinan, dan sopan santun yang
-                                        ditunjukkan oleh tim Specialist kami dalam memberikan pelayanan?
-                                    @break
-
-                                    @case(3)
-                                        3. Bagaimana penilaian Anda terhadap product knowledge yang dimiliki oleh Specialist kami
-                                        dalam membantu Anda selama proses onboarding?
-                                    @break
-
-                                    @case(4)
-                                        4. Bagaimana penilaian Anda terhadap penyelesaian masalah dan solusi yang diberikan
-                                        Specialist kami dalam membantu kesuksesan proses onboarding?
-                                    @break
-
-                                    @case(5)
-                                        5. Bagaimana penilaian Anda terhadap cara komunikasi dari Specialist kami baik verbal maupun
-                                        non-verbal?
-                                    @break
-                                @endswitch
-                            </div>
-                            <div class="rating-buttons">
-                                <span class="rating-label">Sangat Tidak Puas</span>
-                                <div class="d-flex gap-2">
-                                    <input type="hidden" name="pertanyaan{{ $questionNumber }}" value="">
-                                    @foreach (range(1, 5) as $rating)
-                                        <button type="button" class="rating-btn" data-question="{{ $questionNumber }}"
-                                            data-value="{{ $rating }}">
-                                            {{ $rating }}
-                                        </button>
-                                    @endforeach
-                                </div>
-                                <span class="rating-label">Sangat Puas</span>
-                            </div>
-                            @error('pertanyaan' . $questionNumber)
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        @if ($questionNumber == 1)
-                            <hr>
-                            <h5><span style="color: red">* </span><strong>Mohon berikan penilaian detail atas penilaian
-                                    tersebut :</strong></h5>
-                            <br>
-                        @endif
-                    @endforeach
-
-
-                    <div class="form-group mt-4">
-                        <label class="question-text">Apa saran dan masukan Anda yang dapat diberikan kepada Specialist
-                            kami?</label>
-                        <textarea class="form-control" name="suggestions" rows="4" maxlength="2000">{{ old('suggestions') }}</textarea>
-                        <div class="char-count">0 / 2000</div>
-                        @error('suggestions')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="d-flex mt-4">
-                        <button type="submit" class="btn btn-primary btn-navigation ms-auto">Next</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-@stop
-
-@section('css')
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .rating-container {
@@ -162,7 +53,6 @@
             justify-content: center;
         }
 
-        /* Responsive adjustments */
         @media (min-width: 768px) {
             .rating-container {
                 flex-direction: row;
@@ -202,48 +92,146 @@
             }
         }
 
-        /* Keep existing button active state */
         .rating-btn.active {
             background-color: #0d6efd !important;
             color: white !important;
             border-color: #0d6efd !important;
         }
     </style>
-@stop
+</head>
 
-@section('js')
+<body>
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <div class="container py-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title mb-0 text-center w-100">
+                    Pendapat Anda sangat berarti untuk perkembangan produk dan servis kami
+                </h3>
+            </div>
+
+            <div class="card-body">
+                <form id="feedbackForm" action="{{ route('ratings.store', $meeting) }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="meeting_id" value="{{ $meeting->id }}">
+
+                    <h4 class="section-title">Specialist</h4>
+
+                    @foreach (range(1, 5) as $questionNumber)
+                        @if ($questionNumber == 1)
+                            <hr>
+                        @endif
+                        <div class="rating-container">
+                            <div class="question-text">
+                                @switch($questionNumber)
+                                    @case(1)
+                                        1. Berikan penilaian Anda secara keseluruhan terhadap Specialist yang membantu proses
+                                        onboarding
+                                    @break
+
+                                    @case(2)
+                                        2. Bagaimana penilaian Anda terhadap keramahan, kedisiplinan, dan sopan santun yang
+                                        ditunjukkan oleh tim Specialist kami dalam memberikan pelayanan?
+                                    @break
+
+                                    @case(3)
+                                        3. Bagaimana penilaian Anda terhadap product knowledge yang dimiliki oleh Specialist
+                                        kami
+                                        dalam membantu Anda selama proses onboarding?
+                                    @break
+
+                                    @case(4)
+                                        4. Bagaimana penilaian Anda terhadap penyelesaian masalah dan solusi yang diberikan
+                                        Specialist kami dalam membantu kesuksesan proses onboarding?
+                                    @break
+
+                                    @case(5)
+                                        5. Bagaimana penilaian Anda terhadap cara komunikasi dari Specialist kami baik verbal
+                                        maupun
+                                        non-verbal?
+                                    @break
+                                @endswitch
+                            </div>
+                            <div class="rating-buttons">
+                                <span class="rating-label">Sangat Tidak Puas</span>
+                                <div class="d-flex gap-2">
+                                    <input type="hidden" name="pertanyaan{{ $questionNumber }}" value="">
+                                    @foreach (range(1, 5) as $rating)
+                                        <button type="button" class="rating-btn" data-question="{{ $questionNumber }}"
+                                            data-value="{{ $rating }}">
+                                            {{ $rating }}
+                                        </button>
+                                    @endforeach
+                                </div>
+                                <span class="rating-label">Sangat Puas</span>
+                            </div>
+                            @error('pertanyaan' . $questionNumber)
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        @if ($questionNumber == 1)
+                            <hr>
+                            <h5><span style="color: red">* </span><strong>Mohon berikan penilaian detail atas penilaian
+                                    tersebut :</strong></h5>
+                            <br>
+                        @endif
+                    @endforeach
+
+                    <div class="form-group mt-4">
+                        <label class="question-text">Apa saran dan masukan Anda yang dapat diberikan kepada Specialist
+                            kami?</label>
+                        <textarea class="form-control" name="suggestions" rows="4" maxlength="2000">{{ old('suggestions') }}</textarea>
+                        <div class="char-count">0 / 2000</div>
+                        @error('suggestions')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="d-flex mt-4">
+                        <button type="submit" class="btn btn-primary btn-navigation ms-auto">Next</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.15.10/dist/sweetalert2.all.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Handle rating button clicks
             $('.rating-btn').click(function() {
                 const questionNumber = $(this).data('question');
                 const value = $(this).data('value');
 
-                // Remove active class from all buttons in this question group
                 $(this).closest('.rating-buttons').find('.rating-btn').removeClass('active');
-                // Add active class to clicked button
                 $(this).addClass('active');
-                // Set the hidden input value
                 $(`input[name="pertanyaan${questionNumber}"]`).val(value);
             });
 
-            // Handle character count for textarea
             $('textarea[name="suggestions"]').on('input', function() {
                 const count = $(this).val().length;
                 $(this).siblings('.char-count').text(`${count} / 2000`);
             });
 
-            // Handle form submission
             $('#feedbackForm').on('submit', function(e) {
                 e.preventDefault();
 
-                // Debug: tampilkan data yang akan dikirim
                 const formData = new FormData(this);
                 for (let pair of formData.entries()) {
                     console.log(pair[0] + ': ' + pair[1]);
                 }
-                // Check if all questions are answered
+
                 let unansweredQuestions = [];
                 for (let i = 1; i <= 5; i++) {
                     const value = $(`input[name="pertanyaan${i}"]`).val();
@@ -261,9 +249,10 @@
                     return;
                 }
 
-                // If all validations pass, submit the form
                 this.submit();
             });
         });
     </script>
-@stop
+</body>
+
+</html>

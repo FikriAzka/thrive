@@ -24,10 +24,10 @@
                         <i class="fas fa-upload"></i> Upload
                     </button>
                 </div>
-
             </div>
         </div>
         <div class="card-body">
+            <!-- Previous content remains the same until attachment section -->
             <p><strong>Nama Rapat:</strong> {{ $meeting->nama_rapat }}</p>
             <!-- Jenis Rapat -->
             <p><strong>Jenis Rapat:</strong> {{ ucfirst($meeting->jenis_rapat) }}</p>
@@ -70,50 +70,87 @@
                     <li>{{ $peserta->name }}</li>
                 @endforeach
             </ul>
-            @if ($meeting->attachment)
-                <div class="mb-4">
-                    <h6>Attachment:</h6>
-                    @php
-                        $extension = pathinfo($meeting->attachment, PATHINFO_EXTENSION);
-                    @endphp
 
-                    @if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif']))
-                        <img src="{{ asset('storage/' . $meeting->attachment) }}" class="img-fluid"
-                            style="max-width: 100%">
-                    @elseif ($extension == 'pdf')
-                        <div style="height: 800px;">
-                            <embed src="{{ asset('storage/' . $meeting->attachment) }}" type="application/pdf"
-                                width="100%" height="100%">
-                        </div>
-                    @elseif (in_array($extension, ['doc', 'docx']))
-                        <iframe
-                            src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/' . $meeting->attachment)) }}"
-                            width="100%" height="800px" frameborder="0">
-                        </iframe>
-                    @elseif (in_array($extension, ['xls', 'xlsx']))
-                        <iframe
-                            src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/' . $meeting->attachment)) }}"
-                            width="100%" height="800px" frameborder="0">
-                        </iframe>
-                    @else
+            <div class="mb-4">
+                <h5>Attachments MoM :</h5>
+
+                @if ($meeting->attachment_link)
+                    <div class="mb-3">
+                        <strong>Link:</strong>
                         <div class="alert alert-info">
-                            File type not supported for direct preview
+                            <i class="fas fa-link mr-2"></i>
+                            <a href="{{ $meeting->attachment_link }}" target="_blank">{{ $meeting->attachment_link }}</a>
                         </div>
-                    @endif
-                </div>
-            @endif
+                    </div>
+                @endif
 
-            <div class="text-right mt-4">
+                @if ($meeting->attachment)
+                    <div class="mb-3">
+                        <strong>File:</strong>
+                        @php
+                            $extension = pathinfo($meeting->attachment, PATHINFO_EXTENSION);
+                        @endphp
+
+                        @if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif']))
+                            <img src="{{ asset('storage/' . $meeting->attachment) }}" class="img-fluid"
+                                style="max-width: 100%">
+                        @elseif ($extension == 'pdf')
+                            <div style="height: 800px;">
+                                <embed src="{{ asset('storage/' . $meeting->attachment) }}" type="application/pdf"
+                                    width="100%" height="100%">
+                            </div>
+                        @else
+                            <div class="alert alert-info">
+                                <a href="{{ asset('storage/' . $meeting->attachment) }}" target="_blank"
+                                    class="btn btn-sm btn-primary">
+                                    <i class="fas fa-download"></i> Download File
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                @endif
+            </div>
+
+            <div class="text-right mt-4 d-flex justify-content-end align-items-center">
+                <!-- Copy Link Section -->
+                <div class="input-group mr-3" style="max-width: 400px;">
+                    <input type="text" id="ratingLink" value="{{ route('ratings.create', $meeting) }}"
+                        class="form-control" readonly>
+                    <div class="input-group-append">
+                        <button onclick="copyRatingLink()" class="btn btn-outline-secondary" type="button"
+                            title="Copy Rating Link">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Done Button Form -->
                 <form action="{{ route('meetings.complete', $meeting->id) }}" method="POST">
                     @csrf
                     @method('PATCH')
                     <button type="submit" class="btn btn-success">Done</button>
                 </form>
             </div>
+
+            <script>
+                function copyRatingLink() {
+                    const linkInput = document.getElementById('ratingLink');
+                    linkInput.select();
+                    document.execCommand('copy');
+
+                    // Show feedback tooltip using Bootstrap
+                    const copyButton = linkInput.nextElementSibling.querySelector('button');
+                    const originalHtml = copyButton.innerHTML;
+                    copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(() => {
+                        copyButton.innerHTML = originalHtml;
+                    }, 2000);
+                }
+            </script>
         </div>
     </div>
 
-    <!-- Upload Modal -->
+    <!-- Updated Upload Modal -->
     <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -130,9 +167,15 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="attachment">File Attachment</label>
-                            <input type="file" class="form-control" id="attachment" name="attachment" required>
-                            <small class="form-text text-muted">Supported formats: PDF, JPG, PNG, JPEG, DOC, DOCX, XLS,
-                                XLSX</small>
+                            <input type="file" class="form-control" id="attachment" name="attachment">
+                            <small class="form-text text-muted">Supported formats: PDF, JPG, PNG, JPEG (Max: 2MB)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="attachment_link">Attachment Link</label>
+                            <input type="url" class="form-control" id="attachment_link" name="attachment_link"
+                                placeholder="https://example.com/document">
+                            <small class="form-text text-muted">Optional: Add a link to external document/resource</small>
                         </div>
                     </div>
                     <div class="modal-footer">

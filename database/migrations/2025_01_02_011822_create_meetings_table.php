@@ -28,9 +28,7 @@ return new class extends Migration
             $table->string('peserta');
             $table->enum('status', ['scheduled', 'completed', 'cancelled'])->default('scheduled');
             $table->string('attachment')->nullable();
-            
-
-            
+            $table->string('attachment_link')->nullable();
             $table->timestamps();
         });
 

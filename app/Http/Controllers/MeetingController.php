@@ -41,35 +41,39 @@ class MeetingController extends Controller
     {
         try {
             $request->validate([
-                'attachment' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048'
+                'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                'attachment_link' => 'nullable|url'
             ]);
             
+            $data = [];
+            
             if ($request->hasFile('attachment')) {
-                // Store the file
                 $path = $request->file('attachment')->store('meeting-attachments', 'public');
-                
-                // Tambahkan log untuk debugging
+                $data['attachment'] = $path;
                 Log::info('File path: ' . $path);
-                
-                // Update meeting to save attachment path only
-                $updated = $meeting->update([
-                    'attachment' => $path
-                ]);
-                
-                // Tambahkan log untuk memastikan update berhasil
-                Log::info('Update status: ' . ($updated ? 'success' : 'failed'));
-                Log::info('Meeting data: ' . json_encode($meeting));
-                
-                if (!$updated) {
-                    return back()->with('error', 'Gagal menyimpan data');
-                }
+            }
+            
+            if ($request->filled('attachment_link')) {
+                $data['attachment_link'] = $request->attachment_link;
+            }
+            
+            if (empty($data)) {
+                return back()->with('error', 'Please provide either a file or a link');
+            }
+            
+            $updated = $meeting->update($data);
+            
+            Log::info('Update status: ' . ($updated ? 'success' : 'failed'));
+            Log::info('Meeting data: ' . json_encode($meeting));
+            
+            if (!$updated) {
+                return back()->with('error', 'Gagal menyimpan data');
             }
             
             return redirect()->route('meetings.show', $meeting->id)
                 ->with('success', 'Attachment uploaded successfully.');
                 
         } catch (\Exception $e) {
-            // Tambahkan log error
             Log::error('Error in upload method: ' . $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
@@ -83,55 +87,19 @@ class MeetingController extends Controller
             $updated = $meeting->update([
                 'status' => 'completed'
             ]);
-
+            
             if (!$updated) {
                 return back()->with('error', 'Gagal mengubah status meeting');
             }
 
-            // Ambil semua peserta meeting berdasarkan `meeting_id`
-            $participants = MeetingParticipant::where('meeting_id', $meeting->id)
-                ->with('user') // Ambil data user yang terkait
-                ->get();
-
-            // Ambil semua PIC dari model Rating (jika PIC disimpan di rating)
-            $ratings = Rating::where('meeting_id', $meeting->id)
-                ->where('expires_at', '>', now()) // Hanya yang tokennya masih aktif
-                ->get();
-
-            // Array untuk menyimpan semua email yang akan dikirimi
-            $emails = [];
-
-            // Tambahkan email peserta (diambil dari User)
-            foreach ($participants as $participant) {
-                if ($participant->user && $participant->user->email) {
-                    $emails[] = $participant->user->email;
-                }
-            }
-
-            // Tambahkan email PIC (jika ada dalam kolom `pic` di Rating)
-            foreach ($ratings as $rating) {
-                if (!empty($rating->pic)) {
-                    $emails[] = $rating->pic;
-                }
-            }
-
-            // Hapus email duplikat agar tidak ada yang menerima email dua kali
-            $emails = array_unique($emails);
-
-            // Kirim email ke setiap peserta & PIC
-            foreach ($emails as $email) {
-                Mail::to($email)->send(new RatingInvitation($meeting));
-            }
-
             return redirect()->route('meetings.show', $meeting->id)
-                ->with('success', 'Meeting selesai & link rating dikirim ke peserta dan PIC.');
-
+                ->with('success', 'Meeting telah selesai.');
         } catch (\Exception $e) {
             Log::error('Error in complete method: ' . $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-    
+
 
 
     public function getUsers(Request $request)
@@ -164,31 +132,56 @@ class MeetingController extends Controller
             'peserta' => 'required',
         ]);
 
-        $validated['peserta']=json_encode($request->peserta);
-        $validated['nama_pic']=json_encode($request->nama_pic);
+        $validated['peserta'] = json_encode($request->peserta);
+        $validated['nama_pic'] = json_encode($request->nama_pic);
         
         $meeting = Meeting::create($validated);
 
+        // Array untuk menyimpan semua email
+        $emails = [];
+
+        // Simpan dan ambil email peserta
         foreach ($request->peserta as $pesertaId) {
-            MeetingParticipant::create([
+            $participant = MeetingParticipant::create([
                 'meeting_id' => $meeting->id,
                 'user_id' => $pesertaId,
             ]);
-    
+            
+            // Ambil email peserta
+            $user = User::find($pesertaId);
+            if ($user && $user->email) {
+                $emails[] = $user->email;
+            }
         }
 
-        // Kirim email ke PIC
-        // Menyimpan data PIC (Penanggung Jawab)
+        // Simpan dan ambil email PIC
         foreach ($request->nama_pic as $picId) {
-            // Menyimpan data PIC ke dalam MeetingParticipant
             MeetingParticipant::create([
                 'meeting_id' => $meeting->id,
                 'user_id' => $picId,
             ]);
+            
+            // Ambil email PIC
+            $user = User::find($picId);
+            if ($user && $user->email) {
+                $emails[] = $user->email;
+            }
         }
-        
 
-        return redirect()->route('meetings.index')->with('success', 'Rapat berhasil dibuat');
+        // Hapus email duplikat
+        $emails = array_unique($emails);
+
+        try {
+            // Kirim email ke semua peserta dan PIC
+            foreach ($emails as $email) {
+                Mail::to($email)->send(new RatingInvitation($meeting));
+            }
+        } catch (\Exception $e) {
+            Log::error('Error sending emails in store method: ' . $e->getMessage());
+            // Tidak menghentikan proses meski email gagal
+        }
+
+        return redirect()->route('meetings.index')->with('success', 'Rapat berhasil dibuat dan undangan telah dikirim');
     }
 
 

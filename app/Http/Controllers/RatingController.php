@@ -6,6 +6,7 @@ use App\Models\Rating;
 use App\Models\Meeting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class RatingController extends Controller
@@ -21,43 +22,45 @@ class RatingController extends Controller
         return view('ratings.index', compact('ratings', 'neutral', 'very_satisfied'));
     }
 
-    public function showDataForm($meeting)
-    {
-        if (!Cache::get('allow_ratings_{$meeting}', false) && !auth()->check()) {
-            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
-        }
-
-        return view('ratings.create', compact('meeting'));
+    public function showDataForm(Meeting $meeting) // Pastikan $meeting adalah model
+{
+    if (!Cache::get("allow_ratings_{$meeting->id}", true) && !Auth::check()) {
+        abort(403, 'Anda tidak memiliki akses ke halaman ini.');
     }
 
-    public function toggleAccess(Request $request)
-    {
-        Cache::put('allow_ratings', $request->allow_ratings, now()->addHours(1));
+    return view('ratings.create', compact('meeting'));
+}
+
+
+public function toggleAccess(Request $request, Meeting $meeting)
+{
+    Cache::put("allow_ratings_{$meeting->id}", $request->allow_ratings, now()->addHours(1));
+
+    return response()->json([
+        'message' => 'Pengaturan akses berhasil diperbarui.',
+    ]);
+}
+
+
     
-        return response()->json([
-            'message' => 'Pengaturan akses berhasil diperbarui.'
-        ]);
-    }
-    
 
-    public function storeData(Request $request, Meeting $meeting)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|regex:/^[0-9]+$/|max:20',
-            'position' => 'required|string|max:255',
-            'project_or_product' => 'required|string|max:255',
-            'pic' => 'required|string|max:255',
-        ]);
+public function storeData(Request $request, Meeting $meeting)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:ratings,email',
+        'phone' => 'required|regex:/^[0-9]+$/|max:20|unique:ratings,phone',
+        'position' => 'required|string|max:255',
+        'project_or_product' => 'required|string|max:255',
+        'pic' => 'required|string|max:255',
+    ]);
 
-        // Simpan data ke session
-        $request->session()->put('data_diri', $validated);
-        // Simpan meeting_id ke session
-        $request->session()->put('meeting_id', $meeting->id);
+    // Simpan data ke session
+    $request->session()->put('data_diri', $validated);
+    $request->session()->put('meeting_id', $meeting->id);
 
-        return redirect()->route('ratings.form', $meeting);
-    }
+    return redirect()->route('ratings.form', $meeting);
+}
 
     
     public function showRatingForm(Request $request, Meeting $meeting)

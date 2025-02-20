@@ -320,13 +320,13 @@ return [
             'url' => '/home',
             'icon' => 'fas fa-home',
         ],
-        [
-            'text' => 'Pesan',
-            'url' => '#',
-            'icon' => 'fas fa-envelope',
-            'label' => 0,
-            'label_color' => 'success',
-        ],
+        // [
+        //     'text' => 'Pesan',
+        //     'url' => '#',
+        //     'icon' => 'fas fa-envelope',
+        //     'label' => 0,
+        //     'label_color' => 'success',
+        // ],
         [
             'text' => 'Pengajuan Rapat',
             'icon' => 'fas fa-fw fa-users',
