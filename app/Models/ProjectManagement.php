@@ -9,11 +9,28 @@ class ProjectManagement extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama_proyek', 'description', 'status', 'deadline'];
+    protected $table = 'project_managements'; // Pastikan ini sesuai dengan database
 
+    protected $fillable = [
+        'nama_proyek',
+        'description',
+        'status',
+        'deadline',
+    ];
     public function users()
     {
-        // Pastikan relasi dengan tabel pivot menggunakan nama kolom yang sesuai
-        return $this->belongsToMany(User::class, 'project_user', 'project_id', 'user_id');
+        return $this->belongsToMany(User::class, 'project_management_user');
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'project_management_id');
+    }
+
+    public function peserta()
+{
+    return $this->belongsToMany(User::class, 'project_users', 'project_id', 'user_id');
+}
+
+
 }

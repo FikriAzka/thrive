@@ -344,6 +344,13 @@ return [
             'url' => '/ratings',           
         ],
         
+        [
+            'text' => 'Project Management',
+            'icon' => 'fas fa-fw fa-star',
+
+            'url' => '/projectmanagement',           
+        ],
+        
     ],
 
     /*

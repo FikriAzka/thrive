@@ -2,28 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
-    use HasFactory;
-
-    // Tentukan nama tabel jika berbeda dengan nama model (optional)
-    protected $table = 'tasks';
-
-    // Tentukan kolom yang dapat diisi (mass assignable)
     protected $fillable = [
-        'project_id', 
-        'title', 
+        'title',
         'description', 
-        'status', 
+        'status',  // Tambahkan ini
         'due_date',
+        'project_management_id'
     ];
 
-    // Relasi ke model Project jika ada hubungan antara Task dan Project
     public function project()
     {
-        return $this->belongsTo(ProjectManagement::class, 'project_id');
+        return $this->belongsTo(ProjectManagement::class, 'project_management_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

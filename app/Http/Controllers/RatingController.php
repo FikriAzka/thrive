@@ -23,44 +23,41 @@ class RatingController extends Controller
     }
 
     public function showDataForm(Meeting $meeting) // Pastikan $meeting adalah model
-{
-    if (!Cache::get("allow_ratings_{$meeting->id}", true) && !Auth::check()) {
-        abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+    {
+        if (!Cache::get("allow_ratings_{$meeting->id}", true) && !Auth::check()) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
+
+        return view('ratings.create', compact('meeting'));
     }
 
-    return view('ratings.create', compact('meeting'));
-}
 
+    public function toggleAccess(Request $request, Meeting $meeting)
+    {
+        Cache::put("allow_ratings_{$meeting->id}", $request->allow_ratings, now()->addHours(1));
 
-public function toggleAccess(Request $request, Meeting $meeting)
-{
-    Cache::put("allow_ratings_{$meeting->id}", $request->allow_ratings, now()->addHours(1));
+        return response()->json([
+            'message' => 'Pengaturan akses berhasil diperbarui.',
+        ]);
+    }
 
-    return response()->json([
-        'message' => 'Pengaturan akses berhasil diperbarui.',
-    ]);
-}
+    public function storeData(Request $request, Meeting $meeting)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:ratings,email',
+            'phone' => 'required|regex:/^[0-9]+$/|max:20|unique:ratings,phone',
+            'position' => 'required|string|max:255',
+            'project_or_product' => 'required|string|max:255',
+            'pic' => 'required|string|max:255',
+        ]);
 
+        // Simpan data ke session
+        $request->session()->put('data_diri', $validated);
+        $request->session()->put('meeting_id', $meeting->id);
 
-    
-
-public function storeData(Request $request, Meeting $meeting)
-{
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|max:255|unique:ratings,email',
-        'phone' => 'required|regex:/^[0-9]+$/|max:20|unique:ratings,phone',
-        'position' => 'required|string|max:255',
-        'project_or_product' => 'required|string|max:255',
-        'pic' => 'required|string|max:255',
-    ]);
-
-    // Simpan data ke session
-    $request->session()->put('data_diri', $validated);
-    $request->session()->put('meeting_id', $meeting->id);
-
-    return redirect()->route('ratings.form', $meeting);
-}
+        return redirect()->route('ratings.form', $meeting);
+    }
 
     
     public function showRatingForm(Request $request, Meeting $meeting)

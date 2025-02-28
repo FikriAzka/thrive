@@ -18,6 +18,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
+Route::get('/projectmanagement/search', [ProjectManagementController::class, 'search'])->name('projectmanagement.search');
 Route::get('/projectmanagement', [ProjectManagementController::class, 'index'])->name('projectmanagement.index');
 Route::get('/projectmanagement/create', [ProjectManagementController::class, 'create'])->name('projectmanagement.create');
 Route::post('/projectmanagement', [ProjectManagementController::class, 'store'])->name('projectmanagement.store');
@@ -25,6 +26,19 @@ Route::get('/projectmanagement/{id}', [ProjectManagementController::class, 'show
 Route::get('/projectmanagement/{id}/edit', [ProjectManagementController::class, 'edit'])->name('projectmanagement.edit');
 Route::put('/projectmanagement/{id}', [ProjectManagementController::class, 'update'])->name('projectmanagement.update');
 Route::delete('/projectmanagement/{id}', [ProjectManagementController::class, 'destroy'])->name('projectmanagement.destroy');
+
+use App\Http\Controllers\TaskController;
+
+// Routes untuk Project Management
+Route::resource('projectmanagement', ProjectManagementController::class);
+
+// Routes untuk Task
+Route::resource('task', TaskController::class);
+Route::put('/task/{task}/update-status', [TaskController::class, 'updateStatus'])->name('task.updateStatus');
+Route::put('/task/{task}/update-title', [TaskController::class, 'updateTitle'])->name('task.update-title');
+
+Route::post('/task/store', [TaskController::class, 'store'])->name('task.store');
+
 
 
 // Route untuk ratings (dikecualikan dari middleware auth)
