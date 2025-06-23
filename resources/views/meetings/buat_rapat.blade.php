@@ -452,5 +452,41 @@
 
         });
     </script>
+// Tambahkan di section @section('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tanggalMulaiInput = document.getElementById('tanggal_mulai');
 
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            tanggalMulaiInput.setAttribute('min', today);
+
+            // Validate on change
+            tanggalMulaiInput.addEventListener('change', function() {
+                const selectedDate = new Date(this.value);
+                const todayDate = new Date(today);
+
+                if (selectedDate < todayDate) {
+                    // Reset to today if selected date is in the past
+                    this.value = today;
+
+                    // Show warning message
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Tanggal Tidak Valid',
+                        text: 'Tanggal mulai tidak boleh kurang dari hari ini!',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                }
+            });
+
+            // Prevent manual input of past dates
+            tanggalMulaiInput.addEventListener('blur', function() {
+                if (this.value && this.value < today) {
+                    this.value = today;
+                }
+            });
+        });
+    </script>
 @stop

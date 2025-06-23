@@ -14,27 +14,53 @@ class ProjectManagementController extends Controller
 {
     // Menampilkan daftar proyek
     public function index(Request $request)
-{
-    $query = ProjectManagement::with('users', 'tasks');
+    {
+        $query = ProjectManagement::with('users', 'tasks');
 
-    if ($request->has('search') && $request->search != '') {
-        $query->where('nama_proyek', 'like', '%' . $request->search . '%');
+        if ($request->has('search') && $request->search != '') {
+            $query->where('nama_proyek', 'like', '%' . $request->search . '%');
+        }
+        
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+        
+        // Urutkan dari yang terbaru ke yang terlama
+        $projects = $query->orderBy('created_at', 'desc')->get();
+        
+        if ($request->ajax()) {
+            return view('projectmanagement.table', compact('projects'))->render();
+        }
+        
+        return view('projectmanagement.index', compact('projects'));
     }
 
-    if ($request->has('status') && $request->status != '') {
-        $query->where('status', $request->status);
+    public function upload(Request $request, $id)
+    {
+        $request->validate([
+            'attachment' => 'nullable|file|mimes:pdf,jpg,png,jpeg|max:2048',
+            'attachment_link' => 'nullable|url',
+        ]);
+    
+        $project = ProjectManagement::findOrFail($id);
+    
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('attachments', $filename, 'public');
+    
+            $project->attachment_path = $path;
+        }
+    
+        if ($request->attachment_link) {
+            $project->attachment_link = $request->attachment_link;
+        }
+    
+        $project->save();
+    
+        return redirect()->route('projectmanagement.show', $id)->with('success', 'Attachment berhasil diupload.');
     }
-
-    $projects = $query->get();
-
-    if ($request->ajax()) {
-        return view('projectmanagement.table', compact('projects'))->render();
-    }
-
-    return view('projectmanagement.index', compact('projects'));
-}
-
-
+    
     // Menampilkan form tambah proyek
     public function create()
     {

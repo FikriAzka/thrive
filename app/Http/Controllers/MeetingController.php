@@ -92,7 +92,7 @@ class MeetingController extends Controller
                 return back()->with('error', 'Gagal mengubah status meeting');
             }
 
-            return redirect()->route('meetings.show', $meeting->id)
+            return redirect()->route('meetings.index', $meeting->id)
                 ->with('success', 'Meeting telah selesai.');
         } catch (\Exception $e) {
             Log::error('Error in complete method: ' . $e->getMessage());

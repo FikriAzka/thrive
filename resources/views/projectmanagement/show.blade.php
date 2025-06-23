@@ -26,8 +26,77 @@
                 {{ $project->deadline ? \Carbon\Carbon::parse($project->deadline)->format('d M Y') : 'Belum ditentukan' }}
             </p>
             <p><strong>Deskripsi:</strong> {{ $project->description ?? 'Tidak ada deskripsi' }}</p>
+
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">
+                <i class="fas fa-upload"></i> Upload Attachment
+            </button>
+
+            @if ($project->attachment_path || $project->attachment_link)
+                <div class="mt-3">
+                    <h5><strong>Attachment:</strong></h5>
+                    @if ($project->attachment_path)
+                        <p>
+                            <i class="fas fa-file"></i>
+                            <a href="{{ asset('storage/' . $project->attachment_path) }}" target="_blank">
+                                {{ basename($project->attachment_path) }}
+                            </a>
+                        </p>
+                    @endif
+
+                    @if ($project->attachment_link)
+                        <p>
+                            <i class="fas fa-link"></i>
+                            <a href="{{ $project->attachment_link }}" target="_blank">
+                                {{ $project->attachment_link }}
+                            </a>
+                        </p>
+                    @endif
+                </div>
+            @endif
+
         </div>
     </div>
+
+    <!-- Modal Upload -->
+    <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadModalLabel">Upload Attachment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('projectmanagement.upload', $project->id) }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+                    @method('PATCH')
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="attachment">File Attachment</label>
+                            <input type="file" class="form-control" id="attachment" name="attachment">
+                            <small class="form-text text-muted">Supported formats: PDF, JPG, PNG, JPEG (Max: 2MB)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="attachment_link">Attachment Link</label>
+                            <input type="url" class="form-control" id="attachment_link" name="attachment_link"
+                                placeholder="https://example.com/document">
+                            <small class="form-text text-muted">Optional: Add a link to an external
+                                document/resource</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
 
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">

@@ -4,7 +4,6 @@
 
 @section('content_header')
     <h1>Dashboard</h1>
-
 @stop
 
 @section('content')
@@ -17,8 +16,8 @@
                     <i class="fas fa-users"></i>
                 </span>
                 <div class="info-box-content">
-                    <span class="info-box-text">Jumlah Tugas Bulan Ini</span>
-                    <span class="info-box-number">19</span>
+                    <span class="info-box-text">Jumlah Rapat Bulan Ini</span>
+                    <span class="info-box-number">{{ $meetingsThisMonth }}</span>
                 </div>
                 <div class="info-box-footer">
                     <a href="#" class="text-muted">LIHAT RAPAT</a>
@@ -34,7 +33,7 @@
                 </span>
                 <div class="info-box-content">
                     <span class="info-box-text">Jumlah Notulensi Rapat Bulan Ini</span>
-                    <span class="info-box-number">3</span>
+                    <span class="info-box-number">{{ $notesThisMonth }}</span>
                 </div>
                 <div class="info-box-footer">
                     <a href="#" class="text-muted">LIHAT NOTULENSI</a>
@@ -55,27 +54,31 @@
                 </div>
 
                 <!-- Content section -->
-                <div class="p-3">
+                <div class="p-3 flex-grow-1">
                     <h5 class="font-weight-bold mb-3">Rapat Bulan Ini</h5>
 
                     <div>
-                        <div class="mb-2 text-success">
-                            <span>Rapat Sarana Prasarana </span>
-                            <span>(Sudah Lewat)</span>
-                            <span class="text-muted">18-Jun-2020</span>
-                        </div>
-
-                        <div class="text-success">
-                            <span>Rapat RTM </span>
-                            <span>(Sudah Lewat)</span>
-                            <span>04-Jun-2020</span>
-                        </div>
+                        @forelse($meetingsData->take(5) as $meeting)
+                            <div class="mb-2">
+                                <span class="font-weight-bold">{{ $meeting->nama_rapat }}</span>
+                                <span class="{{ $meeting->status_label['class'] }}">
+                                    ({{ $meeting->status_label['text'] }})
+                                </span>
+                                <span class="text-muted">{{ $meeting->formatted_start_date }}</span>
+                                @if($meeting->jenis_rapat === 'online')
+                                    <span class="badge badge-info ml-1">Online</span>
+                                @else
+                                    <span class="badge badge-secondary ml-1">Offline</span>
+                                @endif
+                            </div>
+                        @empty
+                            <div class="text-muted">Belum ada rapat bulan ini</div>
+                        @endforelse
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 
     <!-- Tugas Rapat list box -->
     <div class="card">
@@ -89,17 +92,33 @@
                 </div>
 
                 <!-- Content section -->
-                <div class="p-3">
-                    <h5 class="font-weight-bold mb-3">Tugas Rapat </h5>
+                <div class="p-3 flex-grow-1">
+                    <h5 class="font-weight-bold mb-3">Rapat Mendatang & Terlambat</h5>
 
                     <div>
-                        <div class="mb-2 text-success">
-                            <span>Tugas Rapat Abdimas SI (Status: Selesai, Deadline 1 Hari Lagi) 25-Jun-2020</span>
-                        </div>
+                        <!-- Upcoming Meetings -->
+                        @foreach($upcomingMeetings->take(3) as $meeting)
+                            <div class="mb-2 text-info">
+                                <span class="font-weight-bold">{{ $meeting->nama_rapat }}</span>
+                                <span>({{ $meeting->days_from_now }})</span>
+                                <span class="text-muted">{{ $meeting->formatted_start_date }}</span>
+                                <small class="text-muted d-block">PIC: {{ $meeting->nama_pic }}</small>
+                            </div>
+                        @endforeach
 
-                        <div class="text-muted">
-                            <span>Tugas Rapat Sarana Prasarana (Tidak Selesai & Sudah Lewat Deadline) 23-Jun-2020</span>
-                        </div>
+                        <!-- Overdue Meetings -->
+                        @foreach($overdueMeetings->take(3) as $meeting)
+                            <div class="mb-2 text-danger">
+                                <span class="font-weight-bold">{{ $meeting->nama_rapat }}</span>
+                                <span>(Sudah Lewat & Belum Selesai)</span>
+                                <span class="text-muted">{{ $meeting->formatted_start_date }}</span>
+                                <small class="text-muted d-block">PIC: {{ $meeting->nama_pic }}</small>
+                            </div>
+                        @endforeach
+
+                        @if($upcomingMeetings->isEmpty() && $overdueMeetings->isEmpty())
+                            <div class="text-muted">Tidak ada rapat mendatang atau terlambat</div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -111,8 +130,6 @@
         </div>
     </div>
 
-
-
     <!-- Progress Rapat box -->
     <div class="card">
         <div class="card-body p-0">
@@ -120,44 +137,54 @@
             <div class="d-flex">
                 <!-- Left icon section -->
                 <div class="p-4 d-flex align-items-center justify-content-center"
-                    style="min-height: 100%; margin: 10px; border-radius: 5px; background-color: #ff7e1a;">
-                    <i class="fas fa-edit text-white fa-2x"></i>
+                    style="min-height: 100%; margin: 10px; border-radius: 5px; background-color: #28a745;">
+                    <i class="fas fa-chart-line text-white fa-2x"></i>
                 </div>
 
                 <!-- Content section -->
-                <div class="p-3">
-                    <h5 class="font-weight-bold mb-3">Progress Tugas Rapat</h5>
+                <div class="p-3 flex-grow-1">
+                    <h5 class="font-weight-bold mb-3">Progress Rapat Terbaru</h5>
 
                     <div>
-                        <div class="mb-2">
-                            <span>Rapat Sarana Prasarana </span>
-                            <span class="text-success">(Sudah Lewat)</span>
-                            <span class="text-muted">18-Jun-2020</span>
-                        </div>
-
-                        <div>
-                            <span>Rapat RTM </span>
-                            <span class="text-success">(Sudah Lewat)</span>
-                            <span class="text-muted">04-Jun-2020</span>
-                        </div>
+                        @forelse($progressMeetings->take(5) as $meeting)
+                            <div class="mb-2">
+                                <span class="font-weight-bold">{{ $meeting->nama_rapat }}</span>
+                                <span class="{{ $meeting->status_label['class'] }}">
+                                    ({{ $meeting->status_label['text'] }})
+                                </span>
+                                <span class="text-muted">{{ $meeting->formatted_start_date }}</span>
+                                <small class="text-muted d-block">
+                                    PIC: {{ $meeting->nama_pic }} | 
+                                    @if($meeting->tempat_rapat)
+                                        Tempat: {{ $meeting->tempat_rapat }}
+                                    @else
+                                        Online Meeting
+                                    @endif
+                                </small>
+                            </div>
+                        @empty
+                            <div class="text-muted">Belum ada data rapat</div>
+                        @endforelse
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-
 @stop
 
 @section('css')
     {{-- Add here extra stylesheets --}}
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
-
-
 @stop
 
 @section('js')
     <script>
-        console.log("Hi, I'm using the Laravel-AdminLTE package!");
+        console.log("Dashboard loaded with dynamic data!");
+        
+        // Auto refresh dashboard every 5 minutes
+        setTimeout(function(){
+            location.reload();
+        }, 300000);
     </script>
 @stop

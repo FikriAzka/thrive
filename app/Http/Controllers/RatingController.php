@@ -131,7 +131,7 @@ class RatingController extends Controller
             
             if (!$dataDiri || !$ratingData || $sessionMeetingId != $meeting->id) {
                 return redirect()->route('ratings.create', $meeting)
-                               ->with('error', 'Data tidak lengkap. Silakan isi kembali.');
+                            ->with('error', 'Data tidak lengkap. Silakan isi kembali.');
             }
 
             $dataToSave = array_merge(
@@ -146,8 +146,14 @@ class RatingController extends Controller
             // Clear all session data
             $request->session()->forget(['data_diri', 'meeting_id', 'rating_data']);
             
-            return redirect()->route('ratings.index')
-                ->with('success', 'Terima kasih atas feedback Anda!');
+            // Cek apakah pengguna login atau tidak
+            if (auth()->check()) {
+                return redirect()->route('ratings.index')
+                    ->with('success', 'Terima kasih atas feedback Anda!');
+            } else {
+                return redirect()->route('ratings.create')
+                    ->with('success', 'Terima kasih atas feedback Anda!');
+            }
         } catch (\Exception $e) {
             Log::error('Rating Store Error:', [
                 'message' => $e->getMessage(),

@@ -35,7 +35,7 @@ class GoogleMeetController extends Controller
         // Pastikan parameter kode ada di request
         $authCode = $request->input('code');
         if (!$authCode) {
-            return redirect()->route('google.error')->with('error', 'Authorization code tidak ditemukan.');
+            return response()->json(['error' => 'Authorization code tidak ditemukan.'], 400);
         }
 
         // Inisialisasi Google Client
@@ -44,28 +44,20 @@ class GoogleMeetController extends Controller
         $client->setClientSecret(config('services.google.client_secret'));
         $client->setRedirectUri(config('services.google.redirect_uri'));
 
-        try {
-            // Tukar kode otorisasi dengan token
-            $token = $client->fetchAccessTokenWithAuthCode($authCode);
-
-            // Periksa jika ada error saat menukar token
-            if (isset($token['error'])) {
-                return redirect()->route('google.error')->with('error', $token['error_description']);
-            }
-
-            // Simpan token ke file token.json
-            $tokenPath = storage_path('app/token.json');
-            file_put_contents($tokenPath, json_encode($token));
-
-            // Redirect ke halaman sukses
-            return redirect()->route('google.success')->with('success', 'Token berhasil disimpan.');
-        } catch (\Exception $e) {
-            // Log error untuk debugging
-            Log::error('Error saat menukar token:', ['message' => $e->getMessage()]);
-            return redirect()->route('google.error')->with('error', 'Terjadi kesalahan saat memproses token.');
+        // Tukar kode otorisasi dengan token
+        $token = $client->fetchAccessTokenWithAuthCode($authCode);
+        
+        // Periksa jika ada error saat menukar token
+        if (isset($token['error'])) {
+            return response()->json(['error' => $token['error_description']], 400);
         }
-    }
 
+        // Simpan token ke file token.json
+        $tokenPath = storage_path('app/token.json');
+        file_put_contents($tokenPath, json_encode($token));
+
+        return response()->json(['success' => 'Token berhasil disimpan.', 'token' => $token], 200);
+    }
     public function createGoogleMeet(Request $request)
     {
         $client = new GoogleClient();
@@ -83,10 +75,15 @@ class GoogleMeetController extends Controller
         }
 
         // Jika token kedaluwarsa, refresh token
-        if ($client->isAccessTokenExpired() && $accessToken) {
-            $client->fetchAccessTokenWithRefreshToken($accessToken['refresh_token']);
-            file_put_contents($tokenPath, json_encode($client->getAccessToken()));
+        if ($client->isAccessTokenExpired()) {
+            if (isset($accessToken['refresh_token'])) {
+                $client->fetchAccessTokenWithRefreshToken($accessToken['refresh_token']);
+                file_put_contents($tokenPath, json_encode($client->getAccessToken()));
+            } else {
+                return response()->json(['success' => false, 'message' => 'Session expired, please reauthenticate.']);
+            }
         }
+        
 
 
         // Ambil email dari peserta berdasarkan ID yang ada
