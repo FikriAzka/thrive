@@ -60,6 +60,31 @@ class ProjectManagementController extends Controller
     
         return redirect()->route('projectmanagement.show', $id)->with('success', 'Attachment berhasil diupload.');
     }
+
+    public function deleteAttachment(Request $request, $id)
+{
+    $request->validate([
+        'type' => 'required|in:file,link'
+    ]);
+
+    $project = ProjectManagement::findOrFail($id);
+
+    if ($request->type === 'file') {
+        if ($project->attachment_path && \Storage::exists($project->attachment_path)) {
+            \Storage::delete($project->attachment_path);
+        }
+        $project->attachment_path = null;
+    }
+
+    if ($request->type === 'link') {
+        $project->attachment_link = null;
+    }
+
+    $project->save();
+
+    return redirect()->route('projectmanagement.show', $id)->with('success', 'Attachment berhasil dihapus.');
+}
+
     
     // Menampilkan form tambah proyek
     public function create()
@@ -73,18 +98,19 @@ class ProjectManagementController extends Controller
         //dd($request->all()); // Untuk debug, pastikan data dikirim dengan benar
 
         $request->validate([
-            'nama_proyek' => 'required|string|max:255',
+            'nama_proyek' => 'required|string|max:255|unique:project_managements,nama_proyek',
             'description' => 'required|string',
             'status' => 'required|in:pending,in_progress,completed',
-            'deadline' => 'required|date',
+            'deadline' => 'required|date|after_or_equal:today',
             'peserta' => 'required|array|min:1',
             'peserta.*' => 'exists:users,id',
             'tasks' => 'nullable|array',
             'tasks.*.title' => 'required|string|max:255',
             'tasks.*.description' => 'nullable|string',
-            'tasks.*.status' => 'required|in:todo,in_progress,done',
+            'tasks.*.status' => 'required|in:pending,in_progress,done',
             'tasks.*.due_date' => 'nullable|date',
         ]);
+
 
         // Simpan proyek
         $project = ProjectManagement::create([
@@ -147,7 +173,7 @@ class ProjectManagementController extends Controller
             'tasks' => 'nullable|array',
             'tasks.*.id' => 'nullable|exists:tasks,id', // Pastikan task yang ada memang valid
             'tasks.*.title' => 'required|string|max:255',
-            'tasks.*.status' => 'required|in:todo,in_progress,done',
+            'tasks.*.status' => 'required|in:pending,in_progress,done',
             'tasks.*.description' => 'nullable|string',
             'tasks.*.due_date' => 'nullable|date',
         ]);
