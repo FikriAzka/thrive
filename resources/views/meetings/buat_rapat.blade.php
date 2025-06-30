@@ -452,7 +452,6 @@
 
         });
     </script>
-// Tambahkan di section @section('js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const tanggalMulaiInput = document.getElementById('tanggal_mulai');

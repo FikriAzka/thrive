@@ -102,7 +102,7 @@
                                 <span class="font-weight-bold">{{ $meeting->nama_rapat }}</span>
                                 <span>({{ $meeting->days_from_now }})</span>
                                 <span class="text-muted">{{ $meeting->formatted_start_date }}</span>
-                                <small class="text-muted d-block">PIC: {{ $meeting->nama_pic }}</small>
+                                <small class="text-muted d-block">PIC: {{ $meeting->pic_names }}</small>
                             </div>
                         @endforeach
 
@@ -112,7 +112,7 @@
                                 <span class="font-weight-bold">{{ $meeting->nama_rapat }}</span>
                                 <span>(Sudah Lewat & Belum Selesai)</span>
                                 <span class="text-muted">{{ $meeting->formatted_start_date }}</span>
-                                <small class="text-muted d-block">PIC: {{ $meeting->nama_pic }}</small>
+                                <small class="text-muted d-block">PIC: {{ $meeting->pic_names }}</small>
                             </div>
                         @endforeach
 
@@ -154,13 +154,21 @@
                                 </span>
                                 <span class="text-muted">{{ $meeting->formatted_start_date }}</span>
                                 <small class="text-muted d-block">
-                                    PIC: {{ $meeting->nama_pic }} | 
+                                    PIC: {{ $meeting->pic_names }} | 
                                     @if($meeting->tempat_rapat)
                                         Tempat: {{ $meeting->tempat_rapat }}
-                                    @else
+                                    @elseif($meeting->jenis_rapat === 'online')
                                         Online Meeting
+                                    @else
+                                        Tempat: -
                                     @endif
                                 </small>
+                                @if($meeting->participant_count > 0)
+                                    <small class="text-info d-block">
+                                        <i class="fas fa-users fa-sm"></i> 
+                                        {{ $meeting->participant_count }} Peserta
+                                    </small>
+                                @endif
                             </div>
                         @empty
                             <div class="text-muted">Belum ada data rapat</div>

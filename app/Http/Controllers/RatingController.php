@@ -147,7 +147,7 @@ class RatingController extends Controller
             $request->session()->forget(['data_diri', 'meeting_id', 'rating_data']);
             
             // Cek apakah pengguna login atau tidak
-            if (auth()->check()) {
+            if (Auth::check()) {
                 return redirect()->route('ratings.index')
                     ->with('success', 'Terima kasih atas feedback Anda!');
             } else {

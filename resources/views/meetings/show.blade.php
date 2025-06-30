@@ -57,19 +57,24 @@
             <!-- Nama PIC -->
             <h6 class="mt-3"><strong>Nama PIC:</strong></h6>
             <ul>
-                @foreach ($namaPicUsers as $pic)
-                    <li>{{ $pic->name }}</li>
+                @foreach (json_decode($meeting->nama_pic, true) ?? [] as $picId)
+                    @php $pic = \App\Models\User::find($picId); @endphp
+                    @if ($pic)
+                        <li>{{ $pic->name }}</li>
+                    @endif
                 @endforeach
             </ul>
 
-            <!-- Peserta -->
-            <!-- Peserta -->
             <h6 class="mt-3"><strong>Peserta:</strong></h6>
             <ul>
-                @foreach ($pesertaUsers as $peserta)
-                    <li>{{ $peserta->name }}</li>
+                @foreach (json_decode($meeting->peserta, true) ?? [] as $pesertaId)
+                    @php $peserta = \App\Models\User::find($pesertaId); @endphp
+                    @if ($peserta)
+                        <li>{{ $peserta->name }}</li>
+                    @endif
                 @endforeach
             </ul>
+
 
             <div class="mb-4">
                 <h5>Attachments MoM :</h5>
@@ -165,19 +170,33 @@
                     @csrf
                     @method('PATCH')
                     <div class="modal-body">
+                        {{-- Menampilkan error validasi --}}
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
                         <div class="form-group">
                             <label for="attachment">File Attachment</label>
-                            <input type="file" class="form-control" id="attachment" name="attachment">
+                            <input type="file" class="form-control @error('attachment') is-invalid @enderror"
+                                id="attachment" name="attachment">
                             <small class="form-text text-muted">Supported formats: PDF, JPG, PNG, JPEG (Max: 2MB)</small>
                         </div>
 
                         <div class="form-group">
                             <label for="attachment_link">Attachment Link</label>
-                            <input type="url" class="form-control" id="attachment_link" name="attachment_link"
-                                placeholder="https://example.com/document">
+                            <input type="url" class="form-control @error('attachment_link') is-invalid @enderror"
+                                id="attachment_link" name="attachment_link" placeholder="https://example.com/document"
+                                value="{{ old('attachment_link') }}">
                             <small class="form-text text-muted">Optional: Add a link to external document/resource</small>
                         </div>
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-success">Submit</button>
@@ -186,4 +205,15 @@
             </div>
         </div>
     </div>
+@stop
+
+@section('js')
+    @if ($errors->any())
+        <script>
+            $(document).ready(function() {
+                $('#uploadModal').modal('show');
+            });
+        </script>
+    @endif
+
 @stop

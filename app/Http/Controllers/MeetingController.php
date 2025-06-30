@@ -3,17 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Rating;
 use App\Models\Meeting;
-
-use Google\Service\Calendar;
 use Illuminate\Http\Request;
 use App\Mail\RatingInvitation;
-use App\Mail\MeetingInvitation;
 use App\Models\MeetingParticipant;
-use Google\Client as GoogleClient;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator; 
 
 class MeetingController extends Controller
 {
@@ -40,44 +36,53 @@ class MeetingController extends Controller
     public function upload(Meeting $meeting, Request $request)
     {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-                'attachment_link' => 'nullable|url'
+                'attachment_link' => 'nullable|url',
+            ], [
+                'attachment.max' => 'Ukuran file tidak boleh lebih dari 2MB.',
+                'attachment.mimes' => 'Format file harus berupa PDF, JPG, JPEG, atau PNG.',
+                'attachment_link.url' => 'Link yang diberikan tidak valid.',
             ]);
-            
+
+            if ($validator->fails()) {
+                return redirect()->route('meetings.show', $meeting->id)
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
             $data = [];
-            
+
             if ($request->hasFile('attachment')) {
                 $path = $request->file('attachment')->store('meeting-attachments', 'public');
                 $data['attachment'] = $path;
-                Log::info('File path: ' . $path);
             }
-            
+
             if ($request->filled('attachment_link')) {
                 $data['attachment_link'] = $request->attachment_link;
             }
-            
+
             if (empty($data)) {
-                return back()->with('error', 'Please provide either a file or a link');
+                return redirect()->route('meetings.show', $meeting->id)
+                    ->with('error', 'Harap unggah file atau isi link terlebih dahulu.');
             }
-            
+
             $updated = $meeting->update($data);
-            
-            Log::info('Update status: ' . ($updated ? 'success' : 'failed'));
-            Log::info('Meeting data: ' . json_encode($meeting));
-            
+
             if (!$updated) {
-                return back()->with('error', 'Gagal menyimpan data');
+                return redirect()->route('meetings.show', $meeting->id)
+                    ->with('error', 'Gagal menyimpan data.');
             }
-            
+
             return redirect()->route('meetings.show', $meeting->id)
-                ->with('success', 'Attachment uploaded successfully.');
-                
+                ->with('success', 'Lampiran berhasil diunggah.');
+
         } catch (\Exception $e) {
-            Log::error('Error in upload method: ' . $e->getMessage());
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->route('meetings.show', $meeting->id)
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+
     
 
     public function complete(Meeting $meeting)
@@ -99,8 +104,6 @@ class MeetingController extends Controller
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-
-
 
     public function getUsers(Request $request)
     {
@@ -187,18 +190,9 @@ class MeetingController extends Controller
 
     public function show(Meeting $meeting)
     {
-            
-         // Decode 'nama_pic' to get the array of user IDs
-        $namaPicIds = json_decode($meeting->nama_pic, true);
-        $namaPicUsers = User::whereIn('id', $namaPicIds)->get();
 
-        // Decode 'peserta' to get the array of user IDs for participants
-        $pesertaIds = json_decode($meeting->peserta, true);
-        $pesertaUsers = User::whereIn('id', $pesertaIds)->get();
-        return view('meetings.show', compact('meeting','namaPicUsers', 'pesertaUsers'));
+        return view('meetings.show', compact('meeting'));
     }
-
-
 
     public function edit(Meeting $meeting)
     {

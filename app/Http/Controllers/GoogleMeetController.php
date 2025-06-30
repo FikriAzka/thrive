@@ -83,7 +83,6 @@ class GoogleMeetController extends Controller
                 return response()->json(['success' => false, 'message' => 'Session expired, please reauthenticate.']);
             }
         }
-        
 
 
         // Ambil email dari peserta berdasarkan ID yang ada
