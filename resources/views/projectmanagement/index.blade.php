@@ -6,7 +6,7 @@
     <div class="d-flex justify-content-between align-items-center">
         <h1>Project Management</h1>
         <div class="card-header text-right">
-            <a href="{{ route('projectmanagement.create') }}" class="btn btn-primary">Tambah Proyek</a>
+            <a href="{{ route('projectmanagement.create') }}" class="btn btn-primary">Tambah Project</a>
         </div>
     </div>
 

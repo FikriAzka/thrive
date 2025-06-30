@@ -29,6 +29,8 @@ Route::get('/projectmanagement/{id}/edit', [ProjectManagementController::class, 
 Route::put('/projectmanagement/{id}', [ProjectManagementController::class, 'update'])->name('projectmanagement.update');
 Route::delete('/projectmanagement/{id}', [ProjectManagementController::class, 'destroy'])->name('projectmanagement.destroy');
 Route::patch('/projectmanagement/{id}/upload', [ProjectManagementController::class, 'upload'])->name('projectmanagement.upload');
+Route::patch('projectmanagement/{id}/delete-attachment', [ProjectManagementController::class, 'deleteAttachment'])->name('projectmanagement.deleteAttachment');
+
 
 
 // Routes untuk Project Management

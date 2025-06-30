@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->foreignId('project_management_id')->constrained('project_managements')->onDelete('cascade'); 
             $table->string('title');
             $table->text('description')->nullable();
-            $table->enum('status', ['todo', 'in_progress', 'done'])->default('todo');
+            $table->enum('status', ['pending', 'in_progress', 'done'])->default('pending');
             $table->date('due_date')->nullable();
             $table->timestamps();
         });

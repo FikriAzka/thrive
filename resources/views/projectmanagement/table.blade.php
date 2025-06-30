@@ -14,13 +14,9 @@
             <tr>
                 <td>{{ $index + 1 }}</td>
                 <td>
-                    @if ($project->tasks->count() > 0)
-                        <a href="{{ route('projectmanagement.show', $project->id) }}">
-                            {{ $project->nama_proyek }}
-                        </a>
-                    @else
+                    <a href="{{ route('projectmanagement.show', $project->id) }}">
                         {{ $project->nama_proyek }}
-                    @endif
+                    </a>
                 </td>
                 <td>
                     @if ($project->status == 'pending')
