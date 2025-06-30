@@ -76,8 +76,7 @@
                     // Buat tooltip menggunakan Tippy.js
                     tippy(info.el, {
                         content: `Nama Rapat: ${info.event.title}<br>
-                          Waktu: ${info.event.start.toLocaleTimeString()}<br>
-                          Deskripsi: ${info.event.extendedProps.description || 'Tidak ada deskripsi'}`,
+                          Waktu: ${info.event.start.toLocaleTimeString()}<br>`,
                         allowHTML: true, // Izinkan HTML di tooltip
                         placement: 'top', // Posisi tooltip
                         theme: 'light', // Tema tooltip 

@@ -19,9 +19,6 @@
                     <span class="info-box-text">Jumlah Rapat Bulan Ini</span>
                     <span class="info-box-number">{{ $meetingsThisMonth }}</span>
                 </div>
-                <div class="info-box-footer">
-                    <a href="#" class="text-muted">LIHAT RAPAT</a>
-                </div>
             </div>
         </div>
 
@@ -34,9 +31,6 @@
                 <div class="info-box-content">
                     <span class="info-box-text">Jumlah Notulensi Rapat Bulan Ini</span>
                     <span class="info-box-number">{{ $notesThisMonth }}</span>
-                </div>
-                <div class="info-box-footer">
-                    <a href="#" class="text-muted">LIHAT NOTULENSI</a>
                 </div>
             </div>
         </div>
@@ -102,7 +96,6 @@
                                 <span class="font-weight-bold">{{ $meeting->nama_rapat }}</span>
                                 <span>({{ $meeting->days_from_now }})</span>
                                 <span class="text-muted">{{ $meeting->formatted_start_date }}</span>
-                                <small class="text-muted d-block">PIC: {{ $meeting->pic_names }}</small>
                             </div>
                         @endforeach
 
@@ -112,7 +105,6 @@
                                 <span class="font-weight-bold">{{ $meeting->nama_rapat }}</span>
                                 <span>(Sudah Lewat & Belum Selesai)</span>
                                 <span class="text-muted">{{ $meeting->formatted_start_date }}</span>
-                                <small class="text-muted d-block">PIC: {{ $meeting->pic_names }}</small>
                             </div>
                         @endforeach
 
@@ -123,10 +115,6 @@
                 </div>
             </div>
 
-            <!-- Button for "Lihat Lebih Banyak" -->
-            <div class="d-flex justify-content-end mt-1">
-                <button class="btn btn-link text-primary">Lihat Lebih Banyak</button>
-            </div>
         </div>
     </div>
 
@@ -153,16 +141,6 @@
                                     ({{ $meeting->status_label['text'] }})
                                 </span>
                                 <span class="text-muted">{{ $meeting->formatted_start_date }}</span>
-                                <small class="text-muted d-block">
-                                    PIC: {{ $meeting->pic_names }} | 
-                                    @if($meeting->tempat_rapat)
-                                        Tempat: {{ $meeting->tempat_rapat }}
-                                    @elseif($meeting->jenis_rapat === 'online')
-                                        Online Meeting
-                                    @else
-                                        Tempat: -
-                                    @endif
-                                </small>
                                 @if($meeting->participant_count > 0)
                                     <small class="text-info d-block">
                                         <i class="fas fa-users fa-sm"></i> 
