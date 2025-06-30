@@ -58,16 +58,21 @@
 
                 <!-- Deadline -->
                 <div class="form-group row">
-                    <label for="deadline" class="col-sm-3 col-form-label">Deadline <span
-                            class="text-danger">*</span></label>
+                    <label for="deadline" class="col-sm-3 col-form-label">Deadline <span class="text-danger">*</span></label>
                     <div class="col-sm-9">
-                        <input type="date" class="form-control @error('deadline') is-invalid @enderror" id="deadline"
-                            name="deadline" value="{{ old('deadline') }}">
+                        <input type="date" 
+                            class="form-control @error('deadline') is-invalid @enderror" 
+                            id="deadline"
+                            name="deadline" 
+                            value="{{ old('deadline') }}" 
+                            min="{{ \Carbon\Carbon::today()->format('Y-m-d') }}">
+                        
                         @error('deadline')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>
+
 
                 <!-- Peserta -->
                 <div class="form-group row">
@@ -280,7 +285,7 @@
                     <td><input type="text" name="tasks[${taskCount}][title]" class="form-control" placeholder="Judul Task"></td>
                     <td>
                         <select name="tasks[${taskCount}][status]" class="form-control">
-                            <option value="todo">To Do</option>
+                            <option value="pending">Pending</option>
                             <option value="in_progress">In Progress</option>
                             <option value="done">Done</option>
                         </select>

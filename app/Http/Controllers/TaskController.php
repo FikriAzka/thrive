@@ -20,7 +20,7 @@ class TaskController extends Controller
     $request->validate([
         'project_id' => 'required|exists:project_managements,id', // Changed from project_management to project_managements
         'title' => 'required|string|max:255',
-        'status' => 'required|in:todo,in_progress,done',
+        'status' => 'required|in:pending,in_progress,done',
     ]);
 
     $project = ProjectManagement::findOrFail($request->project_id);
@@ -42,7 +42,7 @@ class TaskController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',  // Sesuaikan dengan field di view
             'description' => 'nullable|string',
-            'status' => 'required|in:todo,in_progress,done',  // Sesuaikan dengan opsi di view
+            'status' => 'required|in:pending,in_progress,done',  // Sesuaikan dengan opsi di view
             'user_id' => 'nullable|exists:users,id'
         ]);
 
@@ -57,7 +57,7 @@ class TaskController extends Controller
 public function updateStatus(Request $request, $id)
 {
     $request->validate([
-        'status' => 'required|in:todo,in_progress,done',
+        'status' => 'required|in:pending,in_progress,done',
     ]);
 
     return DB::transaction(function () use ($id, $request) {
@@ -67,7 +67,7 @@ public function updateStatus(Request $request, $id)
 
         // Cek apakah semua task dalam proyek sudah selesai
         $allTasksCompleted = !Task::where('project_management_id', $task->project_management_id)
-            ->whereIn('status', ['todo', 'in_progress'])
+            ->whereIn('status', ['pending', 'in_progress'])
             ->exists();
 
         if ($allTasksCompleted) {
